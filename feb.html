@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Valentine Week 💖</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;cursor:url('https://cur.cursors-4u.net/others/oth-1/oth62.cur'),auto;}
+  body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#ffdee9 0%,#b5fffc 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:background 1s ease;}
+  .wrap{text-align:center;color:#d63384;max-width:900px;width:90%}
+  h1{font-family:'Pacifico',cursive;font-size:3rem;margin-bottom:10px;color:#ff006e;text-shadow:0 0 10px #fff}
+  .subtitle{font-size:1.1rem;margin-bottom:25px;color:#6a0572}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:20px;justify-items:center}
+  .day{background:rgba(255,255,255,0.7);border-radius:20px;padding:20px;box-shadow:0 8px 25px rgba(255,105,180,0.3);cursor:pointer;transition:all 0.4s ease;transform:scale(1)}
+  .day:hover{transform:scale(1.1) rotate(-3deg);background:rgba(255,255,255,0.9)}
+  .icon{font-size:2.2rem;margin-bottom:8px;animation:bounce 2s infinite ease-in-out}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .day h3{color:#ff006e;font-weight:600;font-size:1rem}
+  .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:0.4s}
+  .modal.open{opacity:1;pointer-events:auto}
+  .card{background:#fff;border-radius:20px;padding:20px;max-width:500px;text-align:center;animation:pop 0.6s ease;position:relative;}
+  @keyframes pop{0%{transform:scale(0.7) rotate(-5deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+  .close-icon{position:absolute;top:10px;right:15px;font-size:22px;cursor:pointer;color:#ff006e;font-weight:bold;}
+  .media img{max-width:100%;border-radius:15px;box-shadow:0 6px 20px rgba(0,0,0,0.3);animation:fadeIn 0.8s ease forwards;}
+  @keyframes fadeIn{from{opacity:0;transform:scale(0.8);}to{opacity:1;transform:scale(1);}}
+  .btn{background:#ff006e;color:#fff;border:none;border-radius:10px;padding:10px 20px;margin:10px;cursor:pointer;font-weight:600;transition:transform 0.2s}
+  .btn:hover{transform:scale(1.1)}
+  .final{display:flex;flex-direction:column;gap:12px;align-items:center;}
+  .question{font-family:'Pacifico';font-size:2rem;color:#ff006e;text-shadow:0 0 5px #fff}
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;}
+  .confetti__piece{position:absolute;width:10px;height:16px;opacity:0}
+  .heart-bg{background:#fff0f5;animation:floatHearts 25s linear infinite;color:#d62828!important;}
+  @keyframes floatHearts{0%{background-position:0 0;}100%{background-position:800px 800px;}}
+  .floating-hearts span{position:absolute;font-size:1.5rem;color:#ff4d6d;animation:float 6s linear infinite;}
+  @keyframes float{0%{transform:translateY(100vh) scale(0.5);opacity:1;}100%{transform:translateY(-10vh) scale(1.2);opacity:0;}}
+  #finalImage{display:none;position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:100;background:#fff;}
+</style>
+</head>
+<body>
+  <div class="wrap" id="home">
+    <h1>Valentine Week ❤️</h1>
+    <div class="subtitle">Every day, a little surprise just for you!</div>
+    <div class="grid" id="daysGrid"></div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="card">
+      <div class="media"><img id="mediaImg" src="" alt="Day"/></div>
+      <div class="close-icon" id="closeModal">✖</div>
+    </div>
+  </div>
+
+  <div class="modal" id="finalModal">
+    <div class="card final">
+      <div class="close-icon" id="backHome">✖</div>
+      <div class="question" id="finalQuestion">Will you be my Valentine? 💘</div>
+      <div><button class="btn" id="yesBtn">Yes 💖</button><button class="btn" id="noBtn" style="background:#6a0572">No 😅</button></div>
+      <div id="finalResponse"></div>
+    </div>
+  </div>
+  <div class="confetti" id="confetti"></div>
+  <div class="floating-hearts" id="hearts"></div>
+  <img id="finalImage" src="images/final.jpg" alt="Final Love"/>
+<script>
+const DAYS=[
+  {title:'Rose Day',file:'images/day1.jpg',icon:'🌹'},
+  {title:'Propose Day',file:'images/day2.jpg',icon:'💍'},
+  {title:'Chocolate Day',file:'images/day3.jpg',icon:'🍫'},
+  {title:'Teddy Day',file:'images/day4.jpg',icon:'🧸'},
+  {title:'Promise Day',file:'images/day5.jpg',icon:'🤝'},
+  {title:'Hug Day',file:'images/day6.jpg',icon:'🤗'},
+  {title:'Valentine’s Day',isFinal:true,icon:'💘'}
+];
+const grid=document.getElementById('daysGrid');
+DAYS.forEach((d,i)=>{let el=document.createElement('div');el.className='day';el.innerHTML=`<div class="icon">${d.icon}</div><h3>${d.title}</h3>`;el.onclick=()=>openDay(i);grid.appendChild(el);});
+const modal=document.getElementById('modal');const img=document.getElementById('mediaImg');const closeModal=document.getElementById('closeModal');closeModal.onclick=()=>modal.classList.remove('open');
+function openDay(i){const d=DAYS[i];if(d.isFinal){openFinal();return;}img.src=d.file;modal.classList.add('open');}
+const finalModal=document.getElementById('finalModal');const yesBtn=document.getElementById('yesBtn');const noBtn=document.getElementById('noBtn');const q=document.getElementById('finalQuestion');const r=document.getElementById('finalResponse');let noCount=0;
+function openFinal(){finalModal.classList.add('open');noCount=0;q.textContent='Will you be my Valentine? 💘';r.textContent='';}
+const backHome=document.getElementById('backHome');backHome.onclick=()=>{finalModal.classList.remove('open');document.body.classList.remove('heart-bg');};
+yesBtn.onclick=()=>endSequence('Yaaay! 💞 You are my Valentine forever!');
+noBtn.onclick=()=>{noCount++;if(noCount===1){q.textContent='Are you sure you don’t want to be my Valentine? 🥺';}else{endSequence('Sorry 😜 You have to be my Valentine — locked forever ❤️');}}
+function endSequence(message){document.body.classList.add('heart-bg');r.innerHTML=`<h2>${message}</h2>`;burstConfetti();floatHearts();setTimeout(()=>{document.getElementById('finalImage').style.display='block';},3000);}
+function burstConfetti(){const confetti=document.getElementById('confetti');confetti.innerHTML='';const colors=['#ff0a54','#ff477e','#ff7096','#ff85a1','#fbb1bd'];for(let i=0;i<80;i++){let p=document.createElement('div');p.className='confetti__piece';p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.left=Math.random()*100+'%';confetti.appendChild(p);const dx=(Math.random()*80)-40,dy=200+Math.random()*200,rot=(Math.random()*720)-360;p.animate([{transform:`translate(0,0) rotate(0deg)`,opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`,opacity:0}],{duration:2000+Math.random()*1000});}}
+function floatHearts(){const hearts=document.getElementById('hearts');hearts.innerHTML='';for(let i=0;i<20;i++){let h=document.createElement('span');h.textContent='❤️';h.style.left=Math.random()*100+'vw';h.style.animationDelay=Math.random()*3+'s';h.style.fontSize=(Math.random()*20+20)+'px';hearts.appendChild(h);}}
+</script>
+</body>
+</html>
